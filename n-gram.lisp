@@ -2,30 +2,33 @@
 
 (in-package #:cloned-natural-language)
 
-;; TODO(mihai): handle end of word with special symbol
 (defun load-2-gram (words)
   "Documentation for load-2-gram with parameters words"
   (let ((rv (make-hash-table)))
-    (loop for word in words
-          for prev-ch = nil do
-            (loop for ch across word do
+    (flet ((merge-freqs (prev-ch ch)
+             (let ((freqs (gethash prev-ch rv)))
+               (unless freqs
+                 (setf freqs (list (list)))
+                 (setf (gethash prev-ch rv) freqs))
+               (let ((fr (assoc ch freqs)))
+                 (unless fr
+                   (setf fr (cons ch 0))
+                   (if (null (car freqs))
+                       (setf (car freqs) fr)
+                       (setf (cdr (last freqs)) (list fr))))
+                 (incf (cdr fr))))))
+      (loop for word in words
+            for prev-ch = nil do
+              (loop for ch across word do
+                (when prev-ch
+                  (merge-freqs prev-ch ch))
+                (setf prev-ch ch))
               (when prev-ch
-                (let ((freqs (gethash prev-ch rv)))
-                  (unless freqs
-                    (setf freqs (list (list)))
-                    (setf (gethash prev-ch rv) freqs))
-                  (let ((fr (assoc ch freqs)))
-                    (unless fr
-                      (setf fr (cons ch 0))
-                      (if (null (car freqs))
-                          (setf (car freqs) fr)
-                          (setf (cdr (last freqs)) (list fr))))
-                    (incf (cdr fr)))))
-              (setf prev-ch ch)))
+                (merge-freqs prev-ch nil))
+            ))
     rv))
 
 (defun convert-to-percentages-in-ngram (n-gram)
-
   (loop for v being the hash-value of n-gram
         for sum = (reduce '+ v :key 'cdr) do
           (loop for item in v do
