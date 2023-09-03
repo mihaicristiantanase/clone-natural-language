@@ -45,10 +45,10 @@
         rv))))
 
 (defparameter *percentages-per-level*
-  (load-percentages-per-level-from-corpus "română.txt"))
+  (load-percentages-per-level-from-corpus "inputs/română.txt"))
 
 (defparameter *percentages-per-neighbor*
-  (load-percentages-per-neighbor-from-corpus "română.txt"))
+  (load-percentages-per-neighbor-from-corpus "inputs/română.txt"))
 
 (defun choose-letter ()
   "Randomly choose a letter based on *percentages* alist"

@@ -44,7 +44,7 @@
        (load-2-gram words)))))
 
 (defparameter *percentages-per-2-gram*
-  (load-2-gram-from-file "română.txt"))
+  (load-2-gram-from-file "inputs/română.txt"))
 
 (defun create-word-from-2-gram ()
   "Documentation for create-word-from-2-gram with parameters "
