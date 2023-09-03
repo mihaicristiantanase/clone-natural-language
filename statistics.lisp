@@ -2,8 +2,8 @@
 
 (in-package #:cloned-natural-language)
 
-(defun load-percentages-from-corpus (fname)
-  "Documentation for load-percentages-from-corpus with parameters fname"
+(defun load-percentages-per-level-from-corpus (fname)
+  "Documentation for load-percentages-per-level-from-corpus with parameters fname"
   (with-open-file (f fname)
     (let* ((words (loop for line = (read-line f nil nil nil) while line
                         collect line))
@@ -17,8 +17,38 @@
                             when ch
                               collect (cons ch (round (* (count ch level-chars) 100) nwords))))))))
 
-(defparameter *percentages-per-length*
-  (load-percentages-from-corpus "română.txt"))
+(defun load-percentages-per-neighbor-from-corpus (fname)
+  "Documentation for load-percentages-per-neighbor-from-corpus with parameters words"
+  (with-open-file (f fname)
+    (let ((words (loop for line = (read-line f nil nil nil) while line
+                       collect line)))
+      ;; load mutli-level dictionary
+      (let ((rv (make-hash-table)))
+        (loop for word in words
+              for current-dict = rv do
+                (loop for ch across word do
+                  (let ((pd (gethash ch current-dict)))
+                    (unless pd
+                      (setf pd (cons 0 (make-hash-table)))
+                      (setf (gethash ch current-dict) pd))
+                    (incf (car pd))
+                    (setf current-dict (cdr pd)))))
+        ;; convert frequencies to percentages
+        (labels ((freq-2-prec (d)
+                   (let ((sum (reduce '+ (loop for k being the hash-key of d
+                                               collect (car (gethash k d))))))
+                     (loop for v being the hash-value of d do
+                       (setf (car v) (round (* (car v) 100) sum)))
+                     (loop for v being the hash-value of d do
+                       (freq-2-prec (cdr v))))))
+          (freq-2-prec rv))
+        rv))))
+
+(defparameter *percentages-per-level*
+  (load-percentages-per-level-from-corpus "română.txt"))
+
+(defparameter *percentages-per-neighbor*
+  (load-percentages-per-neighbor-from-corpus "română.txt"))
 
 (defun choose-letter ()
   "Randomly choose a letter based on *percentages* alist"
@@ -29,12 +59,20 @@
             (return-from choose-letter ch)
             (incf running-sum perc))))))
 
-(defun create-word-from-statistics ()
+(defun create-word-from-statistics (mode)
   "Create a word using statistics"
   (format nil "~{~a~}"
-          (loop for level from 0
-                for *percentages* = (when (< level (length *percentages-per-length*))
-                                      (nth level *percentages-per-length*))
-                for ch = (choose-letter)
-                while ch
-                collect ch)))
+          (ecase mode
+            (level (loop for level from 0
+                         for *percentages* = (when (< level (length *percentages-per-level*))
+                                               (nth level *percentages-per-level*))
+                         for ch = (choose-letter)
+                         while ch
+                         collect ch))
+            (neighbor (let ((pn *percentages-per-neighbor*))
+                        (loop for *percentages* = (loop for k being the hash-key of pn
+                                                        collect (cons k (car (gethash k pn))))
+                              for ch = (choose-letter)
+                              while ch
+                              collect ch
+                              do (setf pn (cdr (gethash ch pn)))))))))

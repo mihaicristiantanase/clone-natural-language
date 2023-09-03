@@ -10,5 +10,7 @@
   :components ((:file "package")
                (:file "randomness")
                (:file "statistics")
-               (:file "statistics-tests")
-               (:file "cloned-natural-language")))
+               (:file "n-gram")
+               (:file "cloned-natural-language")
+               ;; tests
+               (:file "statistics-tests")))
