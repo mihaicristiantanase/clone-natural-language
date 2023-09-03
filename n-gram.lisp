@@ -24,8 +24,7 @@
                   (merge-freqs prev-ch ch))
                 (setf prev-ch ch))
               (when prev-ch
-                (merge-freqs prev-ch nil))
-            ))
+                (merge-freqs prev-ch nil))))
     rv))
 
 (defun convert-to-percentages-in-ngram (n-gram)
