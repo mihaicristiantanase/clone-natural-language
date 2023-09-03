@@ -8,4 +8,7 @@
   :serial t
   :depends-on ()
   :components ((:file "package")
+               (:file "randomness")
+               (:file "statistics")
+               (:file "statistics-tests")
                (:file "cloned-natural-language")))
