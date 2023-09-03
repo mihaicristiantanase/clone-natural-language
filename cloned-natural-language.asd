@@ -6,6 +6,6 @@
   :license  "Mihai Cristian Tănase"
   :version "0.0.1"
   :serial t
-  :depends-on (#:cl)
+  :depends-on ()
   :components ((:file "package")
                (:file "cloned-natural-language")))
