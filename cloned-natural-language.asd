@@ -6,11 +6,12 @@
   :license  "Mihai Cristian Tănase"
   :version "0.0.1"
   :serial t
-  :depends-on ()
+  :depends-on (:drakma :cl-ppcre)
   :components ((:file "package")
                (:file "randomness")
                (:file "statistics")
                (:file "n-gram")
+               (:file "generate-inputs")
                (:file "cloned-natural-language")
                ;; tests
                (:file "statistics-tests")))
