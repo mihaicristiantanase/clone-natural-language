@@ -50,7 +50,7 @@
   (let ((*percentages*
           (mapcar #'(lambda (k) (cons k (round 100 (hash-table-count *percentages-per-2-gram*))))
                   (loop for k being the hash-key of *percentages-per-2-gram*
-                        collect k))))
+                        collect (aref k 0)))))
     (format nil "~{~a~}"
             (loop for ch = (choose-letter)
                   while ch
