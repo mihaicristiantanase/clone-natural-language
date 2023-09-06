@@ -213,7 +213,7 @@
 (defun get-page-body (url)
   "Documentation for get-body with parameters url"
   (let ((rv (http-request url)))
-    (register-groups-bind (body) ("<div class=\"body\"((?:.|\\n)+?)</div>" rv)
+    (register-groups-bind (body) ("<body>((?:.|\\n)+?)</body>" rv)
       ;; replace html entities with unicode characters
       (dolist (he *html-entities*)
         (setf body (regex-replace-all (car he) body (cdr he))))
