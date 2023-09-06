@@ -2,14 +2,23 @@
 
 (in-package #:cloned-natural-language)
 
-(defun load-2-gram (words)
-  "Documentation for load-2-gram with parameters words"
-  (let ((rv (make-hash-table)))
-    (flet ((merge-freqs (prev-ch ch)
-             (let ((freqs (gethash prev-ch rv)))
+(defun append-keeping-last (str c n)
+  "Documentation for append-keeping-last with parameters str c n"
+  (let* ((rv (concatenate 'string str (list c)))
+         (len (length rv)))
+    (if (> len n)
+        (subseq rv (- len n))
+        rv)))
+
+(defun load-n-gram (words &optional (n 2))
+  "Documentation for load-n-gram with parameters words and n (the gram order)"
+  (decf n)
+  (let ((rv (make-hash-table :test 'equal)))
+    (flet ((merge-freqs (prev-gram ch)
+             (let ((freqs (gethash prev-gram rv)))
                (unless freqs
                  (setf freqs (list (list)))
-                 (setf (gethash prev-ch rv) freqs))
+                 (setf (gethash prev-gram rv) freqs))
                (let ((fr (assoc ch freqs)))
                  (unless fr
                    (setf fr (cons ch 0))
@@ -18,13 +27,13 @@
                        (setf (cdr (last freqs)) (list fr))))
                  (incf (cdr fr))))))
       (loop for word in words
-            for prev-ch = nil do
+            for prev-gram = "" do
               (loop for ch across word do
-                (when prev-ch
-                  (merge-freqs prev-ch ch))
-                (setf prev-ch ch))
-              (when prev-ch
-                (merge-freqs prev-ch nil))))
+                (when (= (length prev-gram) n)
+                  (merge-freqs prev-gram ch))
+                (setf prev-gram (append-keeping-last prev-gram ch n)))
+              (when (= (length prev-gram) n)
+                (merge-freqs prev-gram nil))))
     rv))
 
 (defun convert-to-percentages-in-ngram (n-gram)
@@ -34,25 +43,34 @@
             (setf (cdr item) (round (* (cdr item) 100) sum))))
   n-gram)
 
-(defun load-2-gram-from-file (fname)
+(defun load-n-gram-from-file (fname n)
   "Documentation for load-ngram with parameters fname"
   (with-open-file (f fname)
     (let ((words (loop for line = (read-line f nil nil nil) while line
                        collect line)))
       (convert-to-percentages-in-ngram
-       (load-2-gram words)))))
+       (load-n-gram words n)))))
 
 (defparameter *percentages-per-2-gram*
-  (load-2-gram-from-file "inputs/română.txt"))
+  (load-n-gram-from-file "inputs/română-capra-cu-trei-iezi.txt" 2))
 
-(defun create-word-from-2-gram ()
-  "Documentation for create-word-from-2-gram with parameters "
+(defparameter *percentages-per-3-gram*
+  (load-n-gram-from-file "inputs/română-capra-cu-trei-iezi.txt" 3))
+
+(defun create-word-from-n-gram ()
+  "Documentation for create-word-from-n-gram with parameters "
   (let ((*percentages*
           (mapcar #'(lambda (k) (cons k (round 100 (hash-table-count *percentages-per-2-gram*))))
                   (loop for k being the hash-key of *percentages-per-2-gram*
                         collect (aref k 0)))))
     (format nil "~{~a~}"
-            (loop for ch = (choose-letter)
-                  while ch
-                  collect ch
-                  do (setf *percentages* (gethash ch *percentages-per-2-gram*))))))
+            (let ((prev-gram ""))
+              (loop for ch = (choose-letter)
+                    while ch
+                    collect ch
+                    do (setf prev-gram (append-keeping-last prev-gram ch 2))
+                       (setf *percentages*
+                             (gethash prev-gram
+                                      (if (> (length prev-gram) 1)
+                                          *percentages-per-3-gram*
+                                          *percentages-per-2-gram*))))))))
