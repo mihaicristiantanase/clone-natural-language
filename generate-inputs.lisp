@@ -227,7 +227,7 @@
 (defun fetch-words ()
   "Documentation for read-stuff with parameters "
   (let ((src (get-page-body "https://www.povesti-pentru-copii.com/ion-creanga/capra-cu-trei-iezi.html")))
-    (let* ((words (all-matches-as-strings "[a-zA-zăĂșȘțȚâĂîÎ]+" src))
+    (let* ((words (all-matches-as-strings "[a-zA-ZăĂșȘțȚâĂîÎ]+" src))
            (lowercased-words (mapcar 'sb-unicode:lowercase words)))
       (remove-duplicates lowercased-words :test 'equal))))
 
