@@ -219,6 +219,8 @@
         (setf body (regex-replace-all (car he) body (cdr he))))
       ;; replace hex characters with unicode ones
       (setf body (replace-codes-with-unicodes body))
+      ;; remove script elements
+      (setf body (regex-replace-all "<script.*?>(.|\\n)*?</script>" body ""))
       ;; remove html tags
       (setf body (regex-replace-all "</?[^>]+>" body ""))
       ;; return the changes
