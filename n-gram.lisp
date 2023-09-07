@@ -52,10 +52,10 @@
        (load-n-gram words n)))))
 
 (defparameter *percentages-per-2-gram*
-  (load-n-gram-from-file "inputs/română-capra-cu-trei-iezi.txt" 2))
+  (load-n-gram-from-file *word-file* 2))
 
 (defparameter *percentages-per-3-gram*
-  (load-n-gram-from-file "inputs/română-capra-cu-trei-iezi.txt" 3))
+  (load-n-gram-from-file *word-file* 3))
 
 (defun create-word-from-n-gram ()
   "Documentation for create-word-from-n-gram with parameters "

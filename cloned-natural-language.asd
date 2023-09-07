@@ -8,6 +8,7 @@
   :serial t
   :depends-on (:drakma :cl-ppcre)
   :components ((:file "package")
+               (:file "config")
                (:file "randomness")
                (:file "statistics")
                (:file "n-gram")
