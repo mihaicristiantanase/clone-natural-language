@@ -226,15 +226,18 @@
       ;; return the changes
       body)))
 
-(defun fetch-words ()
+(defun fetch-words (url)
   "Documentation for read-stuff with parameters "
-  (let ((src (get-page-body "https://www.povesti-pentru-copii.com/ion-creanga/capra-cu-trei-iezi.html")))
+  (let ((src (get-page-body url)))
     (let* ((words (all-matches-as-strings "[a-zA-ZăĂșȘşŞțȚţŢâĂîÎ]{2,}" src))
            (lowercased-words (mapcar 'sb-unicode:lowercase words)))
       (remove-duplicates lowercased-words :test 'equal))))
 
-(defun write-inputs (outfname)
-  "Documentation for write-inputs with parameters outfname"
-  (let ((words (fetch-words)))
+(defun generate-wordfile-from-url (url outfname)
+  "Generate word file from url:
+- url:      url from which to extract words
+- outfname: path the to words file"
+  (let ((words (fetch-words url)))
     (with-open-file (f outfname :direction :output :if-exists :supersede)
-      (format f "~{~a~%~}" words))))
+      (format f "~{~a~%~}" words))
+    (format t "~&Generated ~a words.~%" (length words))))
