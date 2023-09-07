@@ -19,3 +19,11 @@
                           " " text)))
     (format t "$ ~a~%" cmd)
     (uiop:run-program cmd)))
+
+(defun create-word (type)
+  "Documentation for create-word with parameters type"
+  (ecase type
+    (random (create-word-from-randomness))
+    (statistics-level (create-word-from-statistics 'level))
+    (statistics-neighbor (create-word-from-statistics 'neighbor))
+    (n-gram (create-word-from-n-gram))))
