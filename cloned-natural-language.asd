@@ -14,6 +14,7 @@
                (:file "randomness")
                (:file "statistics")
                (:file "n-gram")
+               (:file "rule")
                (:file "generate-inputs")
                (:file "cloned-natural-language")
                ;; tests
