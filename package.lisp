@@ -13,4 +13,5 @@
    :statistics-level
    :statistics-neighbor
    :n-gram
+   :rule
    ))

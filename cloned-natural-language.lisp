@@ -26,4 +26,5 @@
     (random (create-word-from-randomness))
     (statistics-level (create-word-from-statistics 'level))
     (statistics-neighbor (create-word-from-statistics 'neighbor))
-    (n-gram (create-word-from-n-gram))))
+    (n-gram (create-word-from-n-gram))
+    (rule (create-word-from-rules))))
