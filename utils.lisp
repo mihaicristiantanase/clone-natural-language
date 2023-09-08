@@ -10,3 +10,7 @@
                   (loop for x below level collect (if (= 0 (mod x 3)) "⏐" " "))
                   k (car v))
           (print-freq-dictionary (cdr v) (+ 3 level))))
+
+(defun rand-elt (lst)
+  "Documentation for rand-elt with parameters lst"
+  (nth (random (length lst)) lst))

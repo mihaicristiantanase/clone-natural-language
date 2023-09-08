@@ -9,6 +9,8 @@
   :depends-on (:drakma :cl-ppcre)
   :components ((:file "package")
                (:file "config")
+               (:file "utils")
+               (:file "alphabet")
                (:file "randomness")
                (:file "statistics")
                (:file "n-gram")
